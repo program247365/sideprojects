@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import Image from "next/image";
+// import Image from "next/image";
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -18,8 +18,8 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <div className="flex justify-center align-center">
+    <div className="p-4">
+      <div className="flex flex-col justify-center align-center">
         <div className="flex flex-row items-center justify-between w-full pb-6">
           <input
             className="border border-[#E5E7EB] p-2 rounded-lg w-full mr-2"
