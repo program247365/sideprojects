@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS domains (
+	id data_type INTEGER PRIMARY KEY,
+  url TEXT NOT NULL
+);

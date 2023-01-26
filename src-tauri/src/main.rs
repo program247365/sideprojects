@@ -3,9 +3,21 @@
     windows_subsystem = "windows"
 )]
 
+#[macro_use]
+extern crate diesel;
+extern crate diesel_migrations;
+extern crate dotenv;
+
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use tauri::Manager;
 use tauri::SystemTray;
 use tauri::{CustomMenuItem, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+
+mod db;
+
+use std::env;
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -14,6 +26,11 @@ fn greet(name: &str) -> String {
 }
 
 fn main() {
+    let mut connection = db::establish_connection();
+    connection
+        .run_pending_migrations(MIGRATIONS)
+        .expect("Error migrating SQLite database!");
+
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
     let tray_menu = SystemTrayMenu::new()
