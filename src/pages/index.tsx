@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 // import Image from "next/image";
+type domain = {
+  id: string;
+  url: string;
+}
+
+type domains = {
+  list: domain[];
+};
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [domains, setDomains] = useState([]);
 
   const [isFormShowing, setIsFormShowing] = useState(false);
 
@@ -12,9 +19,9 @@ function App() {
     setIsFormShowing(!!isFormShowing);
   };
 
-  async function greet() {
+  async function get_domains(): Promise<domains> {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+    setDomains(await invoke("get_domains"));
   }
 
   return (
@@ -27,34 +34,23 @@ function App() {
           />
         </div>
         <hr className="py-2" />
+
         <table className="w-full mb-4">
-          <tr className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg">
-            <td className="w-full">
-              <a className="w-full">kbr.sh</a>
-              <p className="w-full">Expires in 165 days</p>
-            </td>
-          </tr>
-          <tr className="flex flex-row justify-items-center justify-between p-4">
-            <td className="w-full">
-              <a>samsshippingcompany.co</a>
-              <p>Expires in 25 days</p>
-            </td>
-          </tr>
-          <tr className="flex flex-row justify-items-center justify-between p-4">
-            <td className="w-100">
-              <a>thenextbigthing.com</a>
-              <p>Expires in 125 days</p>
-            </td>
-          </tr>
-          <tr className="flex flex-row justify-items-center justify-between p-4">
-            <td className="w-100">
-              <a>theriseoffrontendengineering.com</a>
-              <p>Expires in 325 days</p>
-            </td>
-          </tr>
+          {domains && domains.list &&
+            domains.list.map((d) => {
+              return (
+                <tr key={d.id} className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg">
+                  <td className="w-full">
+                    <a className="w-full">{d}</a>
+                    <p className="w-full">Expires in 165 days</p>
+                  </td>
+                </tr>
+              );
+            })}
         </table>
+        <hr className="py-2" />
         <button
-          onClick={showForm}
+          onClick={get_domains}
           className="w-full h-[40px] bg-[#18DC5A] rounded-lg text-sm text-white font-semibold hover:bg-green-500"
         >
           Add A Side Project to Track

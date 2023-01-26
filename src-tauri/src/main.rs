@@ -8,14 +8,13 @@ extern crate diesel;
 extern crate diesel_migrations;
 extern crate dotenv;
 
+mod db;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+mod domains;
+use std::env;
 use tauri::Manager;
 use tauri::SystemTray;
 use tauri::{CustomMenuItem, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-
-mod db;
-
-use std::env;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 
@@ -23,6 +22,13 @@ pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+fn get_domains() -> domains::DomainsQueryResult {
+    let result = domains::get_all_domains();
+
+    result
 }
 
 fn main() {
@@ -60,7 +66,7 @@ fn main() {
             },
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, get_domains])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|_app_handle, event| match event {
