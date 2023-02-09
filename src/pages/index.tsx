@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-// import Image from "next/image";
 type domain = {
   id: string;
   url: string;
@@ -8,22 +7,38 @@ type domain = {
 
 function App() {
   const [domains, setDomains] = useState([]);
+  const [url, setUrl] = useState("");
 
-  const [isFormShowing, setIsFormShowing] = useState(false);
+  async function get_domains(): Promise<typeof domains> {
+    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+    const domains = await invoke("get_domains");
+    // TODO: fix this TS error
+    setDomains(domains);
 
-  const showForm = (isFormShowing) => {
-    setIsFormShowing(!!isFormShowing);
+    return domains;
+  }
+
+  async function add_domain(url: string): Promise<typeof domain> {
+    const domain = await invoke("insert_domain", { domain: { id: 4, url } });
+    setDomains([...domains, domain]);
+
+    return domains;
+  }
+
+  const createDomain = async () => {
+    const domains = await add_domain(url);
+    // logic to create a domain from the entered URL
   };
+
+  //  const [isFormShowing, setIsFormShowing] = useState(false);
+
+  // const showForm = (isFormShowing) => {
+  //    setIsFormShowing(!!isFormShowing);
+  //  };
 
   useEffect(() => {
     get_domains();
-  }, []);
-
-  async function get_domains(): Promise<domains> {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    const domains = await invoke("get_domains");
-    setDomains(domains);
-  }
+  }, [domains, get_domains]);
 
   return (
     <div className="p-4">
@@ -37,28 +52,38 @@ function App() {
         <hr className="py-2" />
 
         <table className="w-full mb-4">
-          {domains &&
-            domains.map((d) => {
-              return (
-                <tr
-                  key={d!.id}
-                  className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg"
-                >
-                  <td className="w-full">
-                    <a className="w-full">{d!.url}</a>
-                    <p className="w-full">Expires in 165 days</p>
-                  </td>
-                </tr>
-              );
-            })}
+          <tbody>
+            {domains &&
+              domains.map((d) => {
+                return (
+                  <tr
+                    key={d!.id}
+                    className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg"
+                  >
+                    <td className="w-full">
+                      <a className="w-full">{d!.url}</a>
+                      <p className="w-full">Expires in 165 days</p>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
         </table>
         <hr className="py-2" />
-        <button
-          onClick={get_domains}
-          className="w-full h-[40px] bg-[#18DC5A] rounded-lg text-sm text-white font-semibold hover:bg-green-500"
-        >
-          Add A Side Project to Track
-        </button>
+        <form>
+          <label>
+            URL:
+            <input
+              className="border border-[#E5E7EB] p-2 rounded-lg w-full mr-2"
+              type="text"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+          </label>
+          <button type="submit" onClick={createDomain}>
+            Submit
+          </button>
+        </form>
       </div>
     </div>
   );

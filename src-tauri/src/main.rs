@@ -43,22 +43,21 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-// #[tauri::command]
-// TODO: fix this error
-// the method blocking_kind exists for reference SVec<sideprojects::models::Domain>`,
-// but its trait bounds...satisifed: method cannot be called on SVecssideprojects: :models: : Domains due to unsatisfied trait bounds
-// fn get_domains() -> Vec<Domain> {
-//    let result = domains::get_all_domains();
-//
-//    result
-// }
-
-// create a method call get_domains() that returns a Vec<Domain>
 #[tauri::command]
 fn get_domains() -> Result<Vec<sideprojects::models::Domain>, String> {
     let result = domains::get_all_domains();
 
     Ok(result)
+}
+
+#[tauri::command]
+fn insert_domain(
+    domain: sideprojects::models::Domain,
+) -> Result<sideprojects::models::Domain, String> {
+    match domains::create_domain(domain) {
+        Ok(new_domain) => Ok(new_domain),
+        Err(error) => Err("Error inserting domain".to_string() + error.to_string().as_str()),
+    }
 }
 
 fn main() {
@@ -96,7 +95,7 @@ fn main() {
             },
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![greet, get_domains])
+        .invoke_handler(tauri::generate_handler![greet, get_domains, insert_domain])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|_app_handle, event| match event {
