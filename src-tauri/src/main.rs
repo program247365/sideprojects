@@ -3,7 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-#[macro_use]
 extern crate diesel;
 extern crate diesel_migrations;
 extern crate dotenv;
@@ -15,8 +14,28 @@ use std::env;
 use tauri::Manager;
 use tauri::SystemTray;
 use tauri::{CustomMenuItem, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
+use serde::{ser::Serializer, Serialize};
+
+// fixed: https://github.com/tauri-apps/tauri/discussions/3913
+// create the error type that represents all errors possible in our program
+#[derive(Debug, thiserror::Error)]
+pub enum CommandError {
+    #[error(transparent)]
+    IoError(#[from] std::io::Error),
+}
+
+// we must manually implement serde::Serialize
+impl Serialize for CommandError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(self.to_string().as_ref())
+    }
+}
+
+pub type CommandResult<T, E = CommandError> = anyhow::Result<T, E>;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -24,11 +43,22 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+// #[tauri::command]
+// TODO: fix this error
+// the method blocking_kind exists for reference SVec<sideprojects::models::Domain>`,
+// but its trait bounds...satisifed: method cannot be called on SVecssideprojects: :models: : Domains due to unsatisfied trait bounds
+// fn get_domains() -> Vec<Domain> {
+//    let result = domains::get_all_domains();
+//
+//    result
+// }
+
+// create a method call get_domains() that returns a Vec<Domain>
 #[tauri::command]
-fn get_domains() -> domains::DomainsQueryResult {
+fn get_domains() -> Result<Vec<sideprojects::models::Domain>, String> {
     let result = domains::get_all_domains();
 
-    result
+    Ok(result)
 }
 
 fn main() {

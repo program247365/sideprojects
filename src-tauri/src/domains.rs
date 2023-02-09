@@ -1,28 +1,17 @@
+use self::models::*;
 use crate::db::establish_connection;
-use serde::Serialize;
+use diesel::prelude::*;
+use sideprojects::*;
 
-use crate::diesel::RunQueryDsl;
-
-#[derive(Debug, Queryable, Serialize, QueryableByName)]
-pub struct DomainsQuery {
-    #[diesel(sql_type = diesel::sql_types::Integer)]
-    pub id: i32,
-    #[diesel(sql_type = diesel::sql_types::Text)]
-    pub url: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct DomainsQueryResult {
-    list: Vec<DomainsQuery>,
-}
-
+/*
 pub fn get_all_domains() -> DomainsQueryResult {
     let mut connection = establish_connection();
+
     let sql_domains = "
     SELECT
       id,
       url
-    FROM domains 
+    FROM domains
   ";
 
     let domains = diesel::sql_query(sql_domains)
@@ -32,4 +21,18 @@ pub fn get_all_domains() -> DomainsQueryResult {
     println!("{:?}", domains);
 
     DomainsQueryResult { list: domains }
+}
+*/
+
+pub fn get_all_domains() -> Vec<Domain> {
+    use self::schema::domains::dsl::*;
+    let connection = &mut establish_connection();
+
+    let results = domains
+        .select((id, url))
+        .limit(5)
+        .load::<Domain>(connection)
+        .unwrap();
+
+    results
 }

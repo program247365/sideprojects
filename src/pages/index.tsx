@@ -1,13 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 // import Image from "next/image";
 type domain = {
   id: string;
   url: string;
-}
-
-type domains = {
-  list: domain[];
 };
 
 function App() {
@@ -19,9 +15,14 @@ function App() {
     setIsFormShowing(!!isFormShowing);
   };
 
+  useEffect(() => {
+    get_domains();
+  }, []);
+
   async function get_domains(): Promise<domains> {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setDomains(await invoke("get_domains"));
+    const domains = await invoke("get_domains");
+    setDomains(domains);
   }
 
   return (
@@ -36,12 +37,15 @@ function App() {
         <hr className="py-2" />
 
         <table className="w-full mb-4">
-          {domains && domains.list &&
-            domains.list.map((d) => {
+          {domains &&
+            domains.map((d) => {
               return (
-                <tr key={d.id} className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg">
+                <tr
+                  key={d!.id}
+                  className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg"
+                >
                   <td className="w-full">
-                    <a className="w-full">{d}</a>
+                    <a className="w-full">{d!.url}</a>
                     <p className="w-full">Expires in 165 days</p>
                   </td>
                 </tr>

@@ -3,6 +3,6 @@
 diesel::table! {
     domains (id) {
         id -> Nullable<Integer>,
-        url -> Text,
+        url -> Nullable<Text>,
     }
 }
