@@ -61,7 +61,14 @@ function App() {
                     className="flex flex-row justify-items-center items-center h-16 justify-between p-4 rounded-lg"
                   >
                     <td className="w-full">
-                      <a className="w-full">{d!.url}</a>
+                      <a
+                        className="w-full"
+                        href={d!.url}
+                        rel="noopener"
+                        target="_blank"
+                      >
+                        {d!.url}
+                      </a>
                       <p className="w-full">Expires in 165 days</p>
                     </td>
                   </tr>
