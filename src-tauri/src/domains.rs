@@ -5,7 +5,6 @@ use diesel::debug_query;
 #[cfg(test)]
 use diesel::insert_into;
 use diesel::prelude::*;
-use diesel::sqlite::Sqlite;
 use sideprojects::*;
 
 pub fn get_all_domains() -> Vec<Domain> {
@@ -14,7 +13,6 @@ pub fn get_all_domains() -> Vec<Domain> {
 
     let results = domains
         .select((id, url))
-        .limit(5)
         .load::<Domain>(connection)
         .unwrap();
 

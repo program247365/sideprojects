@@ -13,13 +13,14 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     const domains = await invoke("get_domains");
     // TODO: fix this TS error
+    console.log(Date.now(), "domains", domains, domains.length);
     setDomains(domains);
 
     return domains;
   }
 
   async function add_domain(url: string): Promise<typeof domain> {
-    const domain = await invoke("insert_domain", { domain: { id: 4, url } });
+    const domain = await invoke("insert_domain", { domain: { url: url } });
     setDomains([...domains, domain]);
 
     return domains;
@@ -38,7 +39,7 @@ function App() {
 
   useEffect(() => {
     get_domains();
-  }, [domains, get_domains]);
+  }, []);
 
   return (
     <div className="p-4">
@@ -49,9 +50,7 @@ function App() {
             placeholder="Search projects..."
           />
         </div>
-        <hr className="py-2" />
-
-        <table className="w-full mb-4">
+        <table className="w-full h-[500px] overflow-auto mb-4">
           <tbody>
             {domains &&
               domains.map((d) => {
@@ -62,21 +61,24 @@ function App() {
                   >
                     <td className="w-full">
                       <a
-                        className="w-full"
-                        href={d!.url}
+                        className="w-full color-[#010101] font-bold text-2xl tracking-wide group text-[#010101] transition-all duration-300 ease-in-out"
+                        href={`https://${d!.url}`}
                         rel="noopener"
                         target="_blank"
                       >
-                        {d!.url}
+                        <span className="bg-left-bottom bg-gradient-to-r from-green-500 to-green-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
+                          {d!.url}
+                        </span>
                       </a>
-                      <p className="w-full">Expires in 165 days</p>
+                      <p className="w-full font-light text-[#8D8D8D]">
+                        Expires in 165 days
+                      </p>
                     </td>
                   </tr>
                 );
               })}
           </tbody>
         </table>
-        <hr className="py-2" />
         <form>
           <label>
             URL:
