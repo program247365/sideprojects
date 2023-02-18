@@ -65,7 +65,7 @@ function App() {
             type="text"
             value={inputValue}
             autoCapitalize="off"
-            autocomplete="off"
+            autoComplete="off"
             onChange={handleInputChange}
             className="border border-[#E5E7EB] p-2 rounded-lg w-full mr-2"
             placeholder="Search projects..."
