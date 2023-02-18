@@ -6,14 +6,30 @@ type domain = {
 };
 
 function App() {
+  const [inputValue, setInputValue] = useState("");
   const [domains, setDomains] = useState([]);
   const [url, setUrl] = useState("");
+  const originalList = domains;
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setInputValue(value);
+
+    const filteredDomains = domains.filter((d) => {
+      d.url.toLowerCase().includes(value.toLowerCase());
+      return d.url.includes(value);
+    });
+
+    if (value === "") {
+      const domains = await invoke("get_domains");
+      setDomains(domains);
+    } else {
+      setDomains(filteredDomains);
+    }
+  };
 
   async function get_domains(): Promise<typeof domains> {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     const domains = await invoke("get_domains");
-    // TODO: fix this TS error
-    console.log(Date.now(), "domains", domains, domains.length);
     setDomains(domains);
 
     return domains;
@@ -46,6 +62,11 @@ function App() {
       <div className="flex flex-col justify-center align-center">
         <div className="flex flex-row items-center justify-between w-full pb-6">
           <input
+            type="text"
+            value={inputValue}
+            autoCapitalize="off"
+            autocomplete="off"
+            onChange={handleInputChange}
             className="border border-[#E5E7EB] p-2 rounded-lg w-full mr-2"
             placeholder="Search projects..."
           />
