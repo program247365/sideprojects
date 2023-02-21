@@ -16,6 +16,17 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "window": {
+        "all": false,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": true,
+        "minimize": true,
+        "unmaximize": true,
+        "unminimize": true,
+        "startDragging": true
       }
     },
     "systemTray": {
@@ -65,9 +76,14 @@
       {
         "fullscreen": false,
         "height": 800,
-        "resizable": false,
-        "title": "Side Projects",
-        "width": 800
+        "resizable": true,
+        "width": 850,
+        "minWidth": 400,
+        "minHeight": 400,
+        "maxWidth": 800,
+        "maxHeight": 850,
+        "titleBarStyle": "overlay",
+        "hiddenTitle": true
       }
     ]
   }

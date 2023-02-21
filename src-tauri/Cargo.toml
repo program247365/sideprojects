@@ -19,7 +19,7 @@ diesel = { version = "2.0.2", features = ["sqlite", "chrono", "uuid"] }
 diesel_migrations = "2.0.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2", features = ["shell-open", "system-tray"] }
+tauri = { version = "1.2", features = ["shell-open", "system-tray", "window-close", "window-hide", "window-maximize", "window-minimize", "window-show", "window-start-dragging", "window-unmaximize", "window-unminimize"] }
 thiserror = "1.0.38"
 anyhow = "1.0.69"
 
