@@ -1,6 +1,12 @@
-# Tauri + Next.js + Typescript
+# Sideprojects
 
-This template should help get you started developing with Tauri, Next.js and Typescript.
+This app let's you track your domain names. You can enter your domain name, it will put into local SQLite database.
+
+Links out to the domain. Uses a Rust crate to talk to WHOIS to see if you're close to expiration.
+
+---
+
+Built with Tauri, Next.js and Typescript.
 
 ## Recommended IDE Setup
 
